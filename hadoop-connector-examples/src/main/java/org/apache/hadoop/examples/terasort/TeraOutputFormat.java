@@ -20,6 +20,8 @@ package org.apache.hadoop.examples.terasort;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
@@ -35,15 +37,12 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.security.TokenCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An output format that writes the key and value appended together.
  */
 public class TeraOutputFormat extends FileOutputFormat<Text,Text> {
-  private static final Logger logger =
-          LoggerFactory.getLogger(TeraOutputFormat.class);
+  private static final Log log = LogFactory.getLog(TeraOutputFormat.class);
 
   private OutputCommitter committer = null;
 
@@ -130,7 +129,7 @@ public class TeraOutputFormat extends FileOutputFormat<Text,Text> {
     FileSystem fs = file.getFileSystem(job.getConfiguration());
      FSDataOutputStream fileOut = fs.create(file);
 
-    logger.info("===>>> TeraOutputFormat getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
+    log.info("===>>> TeraOutputFormat getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
     System.out.println("===>>> TeraOutputFormat getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
 
     return new TeraRecordWriter(fileOut, job);

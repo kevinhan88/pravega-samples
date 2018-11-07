@@ -1,14 +1,4 @@
 /**
- * Copyright (c) 2018 Dell Inc., or its subsidiaries. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- */
-
-/**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -26,12 +16,15 @@
  * limitations under the License.
  */
 
-package io.pravega.example.hadoop.terasort;
+package org.apache.hadoop.examples.terasort;
 
-import io.pravega.connectors.hadoop.EventKey;
-import io.pravega.connectors.hadoop.PravegaInputFormat;
-import io.pravega.example.hadoop.wordcount.PravegaOutputFormat;
-import io.pravega.example.hadoop.wordcount.TextSerializer;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.URI;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -41,35 +34,20 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.MRJobConfig;
-import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URI;
 
 /**
- * This class is copied from apache/hadoop and modified by adding logic to
- * support PravegaInputFormat and PravegaOutputFormat
- *
- * https://github.com/apache/hadoop/blob/trunk/hadoop-mapreduce-project/hadoop-mapreduce-examples
- * /src/main/java/org/apache/hadoop/examples/terasort/TeraSort.java
- *
  * Generates the sampled split points, launches the job, and waits for it to
  * finish. 
  * <p>
  * To run the program: 
- * <b>bin/hadoop jar hadoop-*-examples.jar terasort in-dir out-dir pravega-uri scopeName inputStream outputStreamPrefix</b>
+ * <b>bin/hadoop jar hadoop-*-examples.jar terasort in-dir out-dir</b>
  */
 public class TeraSort extends Configured implements Tool {
-  private static final Logger LOG = LoggerFactory.getLogger(TeraSort.class);
+  private static final Log LOG = LogFactory.getLog(TeraSort.class);
 
   /**
    * A partitioner that splits text keys into roughly equal partitions
@@ -172,7 +150,7 @@ public class TeraSort extends Configured implements Tool {
      * @throws IOException
      */
     private static Text[] readPartitions(FileSystem fs, Path p,
-                                         Configuration conf) throws IOException {
+        Configuration conf) throws IOException {
       int reduces = conf.getInt(MRJobConfig.NUM_REDUCES, 1);
       Text[] result = new Text[reduces - 1];
       DataInputStream reader = fs.open(p);
@@ -194,7 +172,7 @@ public class TeraSort extends Configured implements Tool {
      * @param maxDepth the maximum depth we will build a trie for
      * @return the trie node that will divide the splits correctly
      */
-    private static TrieNode buildTrie(Text[] splits, int lower, int upper,
+    private static TrieNode buildTrie(Text[] splits, int lower, int upper, 
                                       Text prefix, int maxDepth) {
       int depth = prefix.getLength();
       if (depth >= maxDepth || lower == upper) {
@@ -304,35 +282,22 @@ public class TeraSort extends Configured implements Tool {
   }
 
   private static void usage() throws IOException {
-    //The usage is changed for using Pravega streams
-    System.err.println("Usage: terasort [-Dproperty=value] " +
-            "<dummy hdfs input> <hdfs output> <pravega uri> <scope> <input stream> <output stream prefix>");
+    System.err.println("Usage: terasort [-Dproperty=value] <in> <out>");
     System.err.println("TeraSort configurations are:");
     for (TeraSortConfigKeys teraSortConfigKeys : TeraSortConfigKeys.values()) {
       System.err.println(teraSortConfigKeys.toString());
     }
   }
 
-  /**
-   * The original run() has been modified to:
-   *  - take command parameters for running terasort on Pravega streams
-   *  - use special mapper and reducer to convert data type required by Pravega hadoop connector
-   */
   public int run(String[] args) throws Exception {
-    if (args.length != 6) {
+    if (args.length != 2) {
       usage();
       return 2;
     }
     LOG.info("starting");
+    Job job = Job.getInstance(getConf());
     Path inputDir = new Path(args[0]);
     Path outputDir = new Path(args[1]);
-    getConf().setStrings("pravega.uri", args[2]);
-    getConf().setStrings("pravega.scope", args[3]);
-    getConf().setStrings("pravega.stream", args[4]);
-    getConf().setStrings("pravega.out.stream.prefix", args[5]);
-    getConf().setStrings("pravega.deserializer", TextSerializer.class.getName());
-    Job job = Job.getInstance(getConf());
-
     boolean useSimplePartitioner = getUseSimplePartitioner(job);
     TeraInputFormat.setInputPaths(job, inputDir);
     FileOutputFormat.setOutputPath(job, outputDir);
@@ -340,15 +305,13 @@ public class TeraSort extends Configured implements Tool {
     job.setJarByClass(TeraSort.class);
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(Text.class);
-    job.setMapperClass(TeraSortMapper.class);
-    job.setReducerClass(TeraSortReducer.class);
-    job.setInputFormatClass(PravegaInputFormat.class);
-    job.setOutputFormatClass(PravegaOutputFormat.class);
+    job.setInputFormatClass(TeraInputFormat.class);
+    job.setOutputFormatClass(TeraOutputFormat.class);
     if (useSimplePartitioner) {
       job.setPartitionerClass(SimplePartitioner.class);
     } else {
       long start = System.currentTimeMillis();
-      Path partitionFile = new Path(outputDir,
+      Path partitionFile = new Path(outputDir, 
                                     TeraInputFormat.PARTITION_FILENAME);
       URI partitionUri = new URI(partitionFile.toString() +
                                  "#" + TeraInputFormat.PARTITION_FILENAME);
@@ -368,33 +331,6 @@ public class TeraSort extends Configured implements Tool {
     int ret = job.waitForCompletion(true) ? 0 : 1;
     LOG.info("done");
     return ret;
-  }
-
-  /**
-   * The mapper reads events from Pravega stream, the key is the first 10 bytes of value.
-   */
-  public static class TeraSortMapper
-    extends Mapper<EventKey, Text, Text, Text> {
-
-    public void map(EventKey key, Text value, Context context)
-      throws IOException, InterruptedException {
-
-      context.write(new Text(value.toString().substring(0, 10)), value);
-    }
-  }
-
-  /**
-   * Since the output is Pravega stream as well, the key text has to be converted from text to string
-   * to satisfy the requirement of PravegaOutputFormat
-   */
-  public static class TeraSortReducer
-          extends Reducer<Text, Text, String, Text> {
-
-    public void reduce(Text key, Iterable<Text> values, Context context
-    ) throws IOException, InterruptedException {
-      for (Text value: values)
-        context.write(key.toString(), value);
-    }
   }
 
   /**

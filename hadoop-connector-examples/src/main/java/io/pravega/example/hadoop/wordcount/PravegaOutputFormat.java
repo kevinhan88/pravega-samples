@@ -99,7 +99,7 @@ public class PravegaOutputFormat<V> extends OutputFormat<String, V> {
         streamManager.createScope(scopeName);
 
         StreamConfiguration streamConfig = StreamConfiguration.builder().scope(scopeName).streamName(streamName)
-                .scalingPolicy(ScalingPolicy.fixed(3))
+                .scalingPolicy(ScalingPolicy.fixed(6))
                 .build();
 
         streamManager.createStream(scopeName, streamName, streamConfig);

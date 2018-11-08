@@ -56,13 +56,13 @@ public class PravegaGlobalOrderOutputFormat<V> extends PravegaOutputFormat<V> {
         final String deserializerClassName = Optional.ofNullable(conf.get(PravegaGlobalOrderOutputFormat.DESERIALIZER)).orElseThrow(() ->
                 new IOException("The event deserializer must be configured (" + PravegaGlobalOrderOutputFormat.DESERIALIZER + ")"));
 
-        String streamName = streamPrefix;
-        if (context.getTaskAttemptID().getTaskID().getId() <= 2)
-            streamName += "-first";
-        else
-            streamName += "-second";
-//
-//        final String streamName = streamPrefix; // + context.getTaskAttemptID().getTaskID().getId();
+//        String streamName = streamPrefix;
+//        if (context.getTaskAttemptID().getTaskID().getId() <= 2)
+//            streamName += "-first";
+//        else
+//            streamName += "-second";
+
+        final String streamName = streamPrefix + context.getTaskAttemptID().getTaskID().getId();
         StreamManager streamManager = StreamManager.create(controllerURI);
         streamManager.createScope(scopeName);
 

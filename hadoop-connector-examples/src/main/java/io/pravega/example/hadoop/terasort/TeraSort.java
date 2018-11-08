@@ -343,7 +343,7 @@ public class TeraSort extends Configured implements Tool {
     job.setMapperClass(TeraSortMapper.class);
     job.setReducerClass(TeraSortReducer.class);
     job.setInputFormatClass(PravegaInputFormat.class);
-    job.setOutputFormatClass(PravegaOutputFormat.class);
+    job.setOutputFormatClass(PravegaGlobalOrderOutputFormat.class);
     if (useSimplePartitioner) {
       job.setPartitionerClass(SimplePartitioner.class);
     } else {

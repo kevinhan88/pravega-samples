@@ -83,7 +83,7 @@ import java.util.zip.Checksum;
  * <b>bin/hadoop jar hadoop-*-examples.jar teragen 1m in-dir pravega-uri scopeName streamName</b>
  */
 public class TeraGen extends Configured implements Tool {
-  private static final Logger LOG = LoggerFactory.getLogger(TeraGen.class);
+  private static final Logger logger = LoggerFactory.getLogger(TeraGen.class);
 
   public enum Counters {CHECKSUM}
 
@@ -190,7 +190,7 @@ public class TeraGen extends Configured implements Tool {
     public List<InputSplit> getSplits(JobContext job) {
       long totalRows = getNumberOfRows(job);
       int numSplits = job.getConfiguration().getInt(MRJobConfig.NUM_MAPS, 1);
-      LOG.info("Generating " + totalRows + " using " + numSplits);
+      logger.info("getSplits() called: Generating " + totalRows + " using " + numSplits);
       List<InputSplit> splits = new ArrayList<InputSplit>();
       long currentRow = 0;
       for(int split = 0; split < numSplits; ++split) {

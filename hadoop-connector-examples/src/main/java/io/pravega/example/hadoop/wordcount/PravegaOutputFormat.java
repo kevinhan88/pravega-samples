@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PravegaOutputFormat<V> extends OutputFormat<String, V> {
 
-    private static final Logger log = LoggerFactory.getLogger(PravegaOutputFormat.class);
+    private static final Logger logger = LoggerFactory.getLogger(PravegaOutputFormat.class);
 
     // Pravega scope name
     public static final String SCOPE_NAME = "pravega.scope";
@@ -96,7 +96,7 @@ public class PravegaOutputFormat<V> extends OutputFormat<String, V> {
                 new IOException("The event deserializer must be configured (" + PravegaOutputFormat.DESERIALIZER + ")"));
 
 
-        log.info("===>>> io.pravega.example.hadoop.wordcount.PravegaOutputFormat getRecordWriter called to createStream: " + streamName + ", taskID=" + context.getTaskAttemptID().getTaskID().getId());
+        logger.info("===>>> getRecordWriter() called to createStream: " + streamName + ", taskID=" + context.getTaskAttemptID().getTaskID().getId());
 
         StreamManager streamManager = StreamManager.create(controllerURI);
         streamManager.createScope(scopeName);
@@ -113,7 +113,7 @@ public class PravegaOutputFormat<V> extends OutputFormat<String, V> {
             Class<?> deserializerClass = Class.forName(deserializerClassName);
             deserializer = (Serializer<V>) deserializerClass.newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            log.error("Exception when creating deserializer: {}", e);
+            logger.error("Exception when creating deserializer: {}", e);
             throw new IOException(
                     "Unable to create the event deserializer (" + deserializerClassName + ")", e);
         }
@@ -132,6 +132,8 @@ public class PravegaOutputFormat<V> extends OutputFormat<String, V> {
     @Override
     public OutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException, InterruptedException {
         // tmp solution, not for production
+        logger.info("===>>> getOutputCommitter() called, taskID=" + context.getTaskAttemptID().getTaskID().getId());
+
         return new FileOutputCommitter(new Path("/tmp/" + context.getTaskAttemptID().getJobID().toString()), context);
     }
 }

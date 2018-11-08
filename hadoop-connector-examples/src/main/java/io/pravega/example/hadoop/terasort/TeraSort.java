@@ -69,7 +69,7 @@ import java.net.URI;
  * <b>bin/hadoop jar hadoop-*-examples.jar terasort in-dir out-dir pravega-uri scopeName inputStream outputStreamPrefix</b>
  */
 public class TeraSort extends Configured implements Tool {
-  private static final Logger LOG = LoggerFactory.getLogger(TeraSort.class);
+  private static final Logger logger = LoggerFactory.getLogger(TeraSort.class);
 
   /**
    * A partitioner that splits text keys into roughly equal partitions
@@ -323,7 +323,7 @@ public class TeraSort extends Configured implements Tool {
       usage();
       return 2;
     }
-    LOG.info("starting");
+    logger.info("pravega terasort run() called: starting");
     Path inputDir = new Path(args[0]);
     Path outputDir = new Path(args[1]);
     getConf().setStrings("pravega.uri", args[2]);
@@ -355,7 +355,7 @@ public class TeraSort extends Configured implements Tool {
       try {
         TeraInputFormat.writePartitionFile(job, partitionFile);
       } catch (Throwable e) {
-        LOG.error(e.getMessage());
+        logger.error(e.getMessage());
         return -1;
       }
       job.addCacheFile(partitionUri);  
@@ -366,7 +366,7 @@ public class TeraSort extends Configured implements Tool {
     
     job.getConfiguration().setInt("dfs.replication", getOutputReplication(job));
     int ret = job.waitForCompletion(true) ? 0 : 1;
-    LOG.info("done");
+    logger.info("done");
     return ret;
   }
 

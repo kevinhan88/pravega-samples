@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.hadoop.examples.terasort;
+package io.pravega.organicexample.terasort;
 
 import java.io.IOException;
 
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * An output format that writes the key and value appended together.
  */
 public class TeraOutputFormat extends FileOutputFormat<Text,Text> {
-  private static final Logger log = LoggerFactory.getLogger(TeraOutputFormat.class);
+  private static final Logger logger = LoggerFactory.getLogger(TeraOutputFormat.class);
 
   private OutputCommitter committer = null;
 
@@ -129,16 +129,21 @@ public class TeraOutputFormat extends FileOutputFormat<Text,Text> {
                                                  ) throws IOException {
     Path file = getDefaultWorkFile(job, "");
     FileSystem fs = file.getFileSystem(job.getConfiguration());
-     FSDataOutputStream fileOut = fs.create(file);
+    FSDataOutputStream fileOut = fs.create(file);
 
-    log.info("===>>> org.apache.hadoop.examples.terasort.TeraOutputFormat getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
-    System.out.println("===>>> org.apache.hadoop.examples.terasort.TeraOutputFormat getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
+    logger.info("===>>> getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
+    System.out.println("===>>> getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
 
     return new TeraRecordWriter(fileOut, job);
   }
   
   public OutputCommitter getOutputCommitter(TaskAttemptContext context) 
       throws IOException {
+
+    logger.info("===>>> getOutputCommitter() called, taskID=" + context.getTaskAttemptID().getTaskID().getId());
+    System.out.println("===>>> getOutputCommitter() called, taskID=" + context.getTaskAttemptID().getTaskID().getId());
+
+
     if (committer == null) {
       Path output = getOutputPath(context);
       committer = new FileOutputCommitter(output, context);

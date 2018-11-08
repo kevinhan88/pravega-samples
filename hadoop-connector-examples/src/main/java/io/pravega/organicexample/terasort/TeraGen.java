@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.hadoop.examples.terasort;
+package io.pravega.organicexample.terasort;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Checksum;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -35,7 +35,6 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
-import org.apache.hadoop.mapreduce.Cluster;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -49,6 +48,9 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.PureJavaCrc32;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generate the official GraySort input data set.
@@ -66,7 +68,7 @@ import org.apache.hadoop.util.ToolRunner;
  * <b>bin/hadoop jar hadoop-*-examples.jar teragen 10000000000 in-dir</b>
  */
 public class TeraGen extends Configured implements Tool {
-  private static final Log LOG = LogFactory.getLog(TeraGen.class);
+  private static final Logger logger = LoggerFactory.getLogger(TeraGen.class);
 
   public static enum Counters {CHECKSUM}
 
@@ -173,7 +175,9 @@ public class TeraGen extends Configured implements Tool {
     public List<InputSplit> getSplits(JobContext job) {
       long totalRows = getNumberOfRows(job);
       int numSplits = job.getConfiguration().getInt(MRJobConfig.NUM_MAPS, 1);
-      LOG.info("Generating " + totalRows + " using " + numSplits);
+      logger.info("Hi its me! organic teragen, Generating " + totalRows + " using " + numSplits);
+      System.out.println("Hi its me! organic teragen, Generating " + totalRows + " using " + numSplits);
+
       List<InputSplit> splits = new ArrayList<InputSplit>();
       long currentRow = 0;
       for(int split = 0; split < numSplits; ++split) {

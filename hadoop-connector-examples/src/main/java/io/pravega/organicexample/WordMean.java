@@ -1,4 +1,4 @@
-package org.apache.hadoop.examples;
+package io.pravega.organicexample;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.hadoop.examples.terasort;
+package io.pravega.organicexample.terasort;
 
 import java.io.*;
 import java.util.*;

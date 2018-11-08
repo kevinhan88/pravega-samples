@@ -48,7 +48,7 @@ import java.io.IOException;
  * An output format that writes the key and value appended together.
  */
 public class TeraOutputFormat extends FileOutputFormat<Text,Text> {
-  private static final Logger LOG =
+  private static final Logger logger =
       LoggerFactory.getLogger(TeraOutputFormat.class);
   private OutputCommitter committer = null;
 
@@ -97,7 +97,7 @@ public class TeraOutputFormat extends FileOutputFormat<Text,Text> {
            * future, if the hsync operation is supported on striping file, this
            * workaround should be removed.
            */
-          LOG.info("Operation hsync is not supported so far on path with " +
+          logger.info("Operation hsync is not supported so far on path with " +
                   "erasure code policy set");
         }
       }
@@ -144,8 +144,8 @@ public class TeraOutputFormat extends FileOutputFormat<Text,Text> {
 
   public RecordWriter<Text,Text> getRecordWriter(TaskAttemptContext job
                                                  ) throws IOException {
-    LOG.info("===>>> io.pravega.example.hadoop.terasort.TeraOutputFormat getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
-    System.out.println("===>>> io.pravega.example.hadoop.terasort.TeraOutputFormat getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
+    logger.info("===>>> getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
+    System.out.println("===>>> getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
 
 
     Path file = getDefaultWorkFile(job, "");

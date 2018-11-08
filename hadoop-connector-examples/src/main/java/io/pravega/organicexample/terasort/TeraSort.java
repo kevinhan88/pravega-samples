@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-package org.apache.hadoop.examples.terasort;
+package io.pravega.organicexample.terasort;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -39,6 +39,9 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Generates the sampled split points, launches the job, and waits for it to
  * finish. 
@@ -47,7 +50,7 @@ import org.apache.hadoop.util.ToolRunner;
  * <b>bin/hadoop jar hadoop-*-examples.jar terasort in-dir out-dir</b>
  */
 public class TeraSort extends Configured implements Tool {
-  private static final Log LOG = LogFactory.getLog(TeraSort.class);
+  private static final Logger logger = LoggerFactory.getLogger(TeraSort.class);
 
   /**
    * A partitioner that splits text keys into roughly equal partitions
@@ -294,7 +297,7 @@ public class TeraSort extends Configured implements Tool {
       usage();
       return 2;
     }
-    LOG.info("starting");
+    logger.info("Hi, its me! starting this organic Terasort");
     Job job = Job.getInstance(getConf());
     Path inputDir = new Path(args[0]);
     Path outputDir = new Path(args[1]);
@@ -318,7 +321,7 @@ public class TeraSort extends Configured implements Tool {
       try {
         TeraInputFormat.writePartitionFile(job, partitionFile);
       } catch (Throwable e) {
-        LOG.error(e.getMessage());
+        logger.error(e.getMessage());
         return -1;
       }
       job.addCacheFile(partitionUri);  
@@ -329,7 +332,7 @@ public class TeraSort extends Configured implements Tool {
     
     job.getConfiguration().setInt("dfs.replication", getOutputReplication(job));
     int ret = job.waitForCompletion(true) ? 0 : 1;
-    LOG.info("done");
+    logger.info("hi its me! done");
     return ret;
   }
 

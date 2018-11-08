@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hadoop.examples.terasort;
+package io.pravega.organicexample.terasort;
 
 /**
  * This class implements a 128-bit linear congruential generator.

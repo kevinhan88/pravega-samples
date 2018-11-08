@@ -68,8 +68,8 @@ public class ExampleDriver {
                     "A map/reduce program that reads events from sorted streams and write into hdfs files " +
                             "for validation purpose");
 
-            pgd.addClass("hadoop-teragen", org.apache.hadoop.examples.terasort.TeraGen.class, "Original: Generate data for the terasort");
-            pgd.addClass("hadoop-terasort", org.apache.hadoop.examples.terasort.TeraSort.class, "Original: Run the terasort");
+            pgd.addClass("organic-teragen", io.pravega.organicexample.terasort.TeraGen.class, "Original: Generate data for the terasort");
+            pgd.addClass("organic-terasort", io.pravega.organicexample.terasort.TeraSort.class, "Original: Run the terasort");
 
 
             exitCode = pgd.run(argv);

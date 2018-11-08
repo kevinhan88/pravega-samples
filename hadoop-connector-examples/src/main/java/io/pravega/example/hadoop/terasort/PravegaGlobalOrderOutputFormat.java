@@ -40,7 +40,7 @@ import java.util.Optional;
  */
 public class PravegaGlobalOrderOutputFormat<V> extends PravegaOutputFormat<V> {
 
-    private static final Logger log = LoggerFactory.getLogger(PravegaGlobalOrderOutputFormat.class);
+    private static final Logger logger = LoggerFactory.getLogger(PravegaGlobalOrderOutputFormat.class);
 
     public static final String OUT_STREAM_PREFIX = "pravega.out.stream.prefix";
 
@@ -71,7 +71,7 @@ public class PravegaGlobalOrderOutputFormat<V> extends PravegaOutputFormat<V> {
                 .build();
 
         streamManager.createStream(scopeName, streamName, streamConfig);
-        log.info("===>>> PravegaGlobalOrderOutputFormat getRecordWriter called to createStream: " + streamName + ", taskID=" + context.getTaskAttemptID().getTaskID().getId());
+        logger.info("===>>> getRecordWriter() called to createStream: " + streamName + ", taskID=" + context.getTaskAttemptID().getTaskID().getId());
 
         ClientFactory clientFactory = ClientFactory.withScope(scopeName, controllerURI);
 
@@ -80,7 +80,7 @@ public class PravegaGlobalOrderOutputFormat<V> extends PravegaOutputFormat<V> {
             Class<?> deserializerClass = Class.forName(deserializerClassName);
             deserializer = (Serializer<V>) deserializerClass.newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            log.error("Exception when creating deserializer: {}", e);
+            logger.error("Exception when creating deserializer: {}", e);
             throw new IOException(
                     "Unable to create the event deserializer (" + deserializerClassName + ")", e);
         }

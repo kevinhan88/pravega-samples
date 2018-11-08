@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.hadoop.examples;
+package io.pravega.organicexample;
 
 import java.io.IOException;
 import java.util.ArrayList;

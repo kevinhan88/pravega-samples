@@ -144,6 +144,10 @@ public class TeraOutputFormat extends FileOutputFormat<Text,Text> {
 
   public RecordWriter<Text,Text> getRecordWriter(TaskAttemptContext job
                                                  ) throws IOException {
+    LOG.info("===>>> io.pravega.example.hadoop.terasort.TeraOutputFormat getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
+    System.out.println("===>>> io.pravega.example.hadoop.terasort.TeraOutputFormat getRecordWriter() called, taskID=" + job.getTaskAttemptID().getTaskID().getId());
+
+
     Path file = getDefaultWorkFile(job, "");
     FileSystem fs = file.getFileSystem(job.getConfiguration());
      FSDataOutputStream fileOut = fs.create(file);

@@ -95,6 +95,9 @@ public class PravegaOutputFormat<V> extends OutputFormat<String, V> {
         final String deserializerClassName = Optional.ofNullable(conf.get(PravegaOutputFormat.DESERIALIZER)).orElseThrow(() ->
                 new IOException("The event deserializer must be configured (" + PravegaOutputFormat.DESERIALIZER + ")"));
 
+
+        log.info("===>>> io.pravega.example.hadoop.wordcount.PravegaOutputFormat getRecordWriter called to createStream: " + streamName + ", taskID=" + context.getTaskAttemptID().getTaskID().getId());
+
         StreamManager streamManager = StreamManager.create(controllerURI);
         streamManager.createScope(scopeName);
 

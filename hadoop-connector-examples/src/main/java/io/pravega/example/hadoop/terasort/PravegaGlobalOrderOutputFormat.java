@@ -71,7 +71,7 @@ public class PravegaGlobalOrderOutputFormat<V> extends PravegaOutputFormat<V> {
                 .build();
 
         streamManager.createStream(scopeName, streamName, streamConfig);
-        log.info("===>>> createStream called: " + streamName + ", taskID=" + context.getTaskAttemptID().getTaskID().getId());
+        log.info("===>>> PravegaGlobalOrderOutputFormat getRecordWriter called to createStream: " + streamName + ", taskID=" + context.getTaskAttemptID().getTaskID().getId());
 
         ClientFactory clientFactory = ClientFactory.withScope(scopeName, controllerURI);
 

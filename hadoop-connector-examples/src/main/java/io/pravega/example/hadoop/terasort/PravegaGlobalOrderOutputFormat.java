@@ -67,7 +67,7 @@ public class PravegaGlobalOrderOutputFormat<V> extends PravegaOutputFormat<V> {
         streamManager.createScope(scopeName);
 
         StreamConfiguration streamConfig = StreamConfiguration.builder().scope(scopeName).streamName(streamName)
-                .scalingPolicy(ScalingPolicy.fixed(3))
+                .scalingPolicy(ScalingPolicy.fixed(1))
                 .build();
 
         streamManager.createStream(scopeName, streamName, streamConfig);

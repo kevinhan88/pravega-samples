@@ -49,7 +49,7 @@ shadowJar {
     manifest {
         attributes(
 //                'Main-Class': 'io.pravega.example.hadoop.wordcount.ExampleDriver',
-                'Main-Class': 'org.apache.hadoop.examples.ExampleDriver',
+                'Main-Class': 'org.apache.hadoop.kevin.examples.ExampleDriver',
         )
     }
 }
